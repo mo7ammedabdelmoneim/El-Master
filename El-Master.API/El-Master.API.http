@@ -1,0 +1,6 @@
+@El_Master.API_HostAddress = http://localhost:5183
+
+GET {{El_Master.API_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
