@@ -7,4 +7,13 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\El-Master.Domain\El-Master.Domain.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Common\Interfaces\Repository\" />
+    <Folder Include="Common\Services\" />
+  </ItemGroup>
+
 </Project>
