@@ -17,5 +17,8 @@ namespace El_Master.Infrastructure.Identity
 
         [ForeignKey("GradeId")]
         public Grade Grade { get; set; }
+
+        public List<RefreshToken>? RefreshTokens { get; set; } = new();
+
     }
 }

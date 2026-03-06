@@ -1,4 +1,5 @@
 using El_Master.Application.Common.Interfaces.Services;
+using El_Master.Application.Settings;
 using El_Master.Domain.Common;
 using El_Master.Infrastructure.Identity;
 using El_Master.Infrastructure.Presistence;
@@ -28,21 +29,20 @@ namespace El_Master.API
             {
                 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
             });
-            builder.Services.Configure<JWT>(builder.Configuration.GetSection("JWT"));
 
             //Register the Identity Service
             builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
             {   // with Reset password Rules
                 // Password settings (strong but user-friendly)
-                options.Password.RequireDigit = true;                    // at least one number
-                options.Password.RequireLowercase = true;                // at least one lowercase letter
-                options.Password.RequireUppercase = true;                // at least one uppercase letter
-                options.Password.RequireNonAlphanumeric = true;          // at least one special character
-                options.Password.RequiredLength = 8;                     // minimum length
-                options.Password.RequiredUniqueChars = 1;                // at least one unique character
+                options.Password.RequireDigit = true;             
+                options.Password.RequireLowercase = true;         
+                options.Password.RequireUppercase = true;         
+                options.Password.RequireNonAlphanumeric = true;   
+                options.Password.RequiredLength = 8;              
+                options.Password.RequiredUniqueChars = 1;         
 
                 // User settings
-                options.User.RequireUniqueEmail = true;                  // emails must be unique
+                options.User.RequireUniqueEmail = true;              
 
                 // Lockout settings (optional, security feature)
                 options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(5);
@@ -67,7 +67,8 @@ namespace El_Master.API
                         ValidateLifetime = true,
                         ValidIssuer = builder.Configuration["JWT:Issuer"],
                         ValidAudience = builder.Configuration["JWT:Audience"],
-                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JWT:Key"]))
+                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JWT:Key"])),
+                        ClockSkew = TimeSpan.Zero
                     };
                 });
 

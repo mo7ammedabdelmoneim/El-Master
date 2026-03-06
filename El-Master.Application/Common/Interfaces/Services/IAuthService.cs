@@ -10,8 +10,11 @@ namespace El_Master.Application.Common.Interfaces.Services
 {
     public interface IAuthService
     {
-        Task<AuthModel> RegisterAsync(RegisterDto dto);
+        Task<AuthModel> RegisterAsync(RegisterDto model);
         Task<AuthModel> GetTokenAsync(TokenRequestDto model);
         Task<string> AddRoleAsync(AddRoleDto model);
+        Task<AuthModel> RefreshTokenAsync(string token);
+        Task<bool> RevokeTokenAsync(string token);
+        
     }
 }
