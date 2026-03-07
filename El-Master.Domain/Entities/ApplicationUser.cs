@@ -1,9 +1,10 @@
 ﻿using El_Master.Domain.Entities;
+using El_Master.Domain.Entities.ELearning.Domain.Entities;
 using Microsoft.AspNetCore.Identity;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace El_Master.Infrastructure.Identity
+namespace El_Master.Domain.Entities
 {
     public class ApplicationUser : IdentityUser
     {
@@ -17,6 +18,8 @@ namespace El_Master.Infrastructure.Identity
 
         [ForeignKey("GradeId")]
         public Grade Grade { get; set; }
+
+        public Student? Student { get; set; }
 
         public List<RefreshToken>? RefreshTokens { get; set; } = new();
 

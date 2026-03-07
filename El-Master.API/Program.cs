@@ -1,13 +1,11 @@
 using El_Master.Application.Common.Interfaces.Services;
 using El_Master.Application.Settings;
-using El_Master.Domain.Common;
-using El_Master.Infrastructure.Identity;
+using El_Master.Domain.Entities;
 using El_Master.Infrastructure.Presistence;
 using El_Master.Infrastructure.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 

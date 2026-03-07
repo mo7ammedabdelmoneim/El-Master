@@ -1,5 +1,5 @@
 ﻿using El_Master.Domain.Entities;
-using El_Master.Infrastructure.Identity;
+using El_Master.Domain.Entities.ELearning.Domain.Entities;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
