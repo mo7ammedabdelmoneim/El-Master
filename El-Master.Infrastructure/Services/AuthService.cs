@@ -1,6 +1,7 @@
 ﻿using El_Master.Application.Features.Auth.Commands.AddRoleCommand;
 using El_Master.Application.Features.Auth.Commands.GetTokenCommand;
 using El_Master.Application.Features.Auth.Commands.RegisterCommand;
+using El_Master.Application.Features.Auth.Commands.RevokeToken;
 using El_Master.Application.Features.Auth.DTOs;
 using El_Master.Application.Interfaces.Services;
 using El_Master.Application.Settings;
@@ -56,7 +57,11 @@ namespace El_Master.Infrastructure.Services
                 return new AuthModel { Message = errors };
             }
 
+            // Add user role
             await _userManager.AddToRoleAsync(user, "User");
+
+            // create a student obj
+            
 
             var jwtSecurityToken = await CreateJwtToken(user);
 
@@ -179,14 +184,14 @@ namespace El_Master.Infrastructure.Services
             return authModel;
         }
 
-        public async Task<bool> RevokeTokenAsync(string token)
+        public async Task<bool> RevokeTokenAsync(RevokeTokenDto revokeToken)
         {
-            var user = await _userManager.Users.SingleOrDefaultAsync(u => u.RefreshTokens.Any(t => t.Token == token));
+            var user = await _userManager.Users.SingleOrDefaultAsync(u => u.RefreshTokens.Any(t => t.Token == revokeToken.Token));
 
             if (user == null)
                 return false;
 
-            var refreshToken = user.RefreshTokens.Single(t => t.Token == token);
+            var refreshToken = user.RefreshTokens.Single(t => t.Token == revokeToken.Token);
 
             if (!refreshToken.IsActive)
                 return false;

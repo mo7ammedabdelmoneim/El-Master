@@ -85,8 +85,9 @@ namespace El_Master.API.Controllers
         }
 
         [HttpPost("revoke-token")]
-        public async Task<IActionResult> RevokeToken(RevokeTokenCommand command)
+        public async Task<IActionResult> RevokeToken(RevokeTokenDto revokeToken)
         {
+            var command  = new RevokeTokenCommand(revokeToken);
             var result = await _mediator.Send(command);
             return result.ToApiResponse();
         }

@@ -1,9 +1,8 @@
 ﻿using El_Master.Application.Common.Results;
-using El_Master.Application.DTOs;
-using El_Master.Application.Features.Auth.DTOs;
 using El_Master.Application.Interfaces.Repositories;
 using El_Master.Application.Interfaces.Services;
 using El_Master.Domain.Common;
+using El_Master.Domain.Entities;
 using MediatR;
 
 namespace El_Master.Application.Features.Auth.Commands.RegisterCommand
@@ -12,11 +11,13 @@ namespace El_Master.Application.Features.Auth.Commands.RegisterCommand
     {
         private readonly IGradeRepository gradeRepository;
         private readonly IAuthService _authService;
+        private readonly IStudentRepository studentRepository;
 
-        public RegisterHandler(IGradeRepository gradeRepository, IAuthService authService)
+        public RegisterHandler(IGradeRepository gradeRepository, IAuthService authService, IStudentRepository studentRepository)
         {
             this.gradeRepository = gradeRepository;
             _authService = authService;
+            this.studentRepository = studentRepository;
         }
 
         public async Task<Result<AuthModel>> Handle(
@@ -41,6 +42,15 @@ namespace El_Master.Application.Features.Auth.Commands.RegisterCommand
 
             if (!result.IsAuthenticated)
                 return Result<AuthModel>.Failure(result.Message);
+
+            // create student 
+            var student = new Student
+            {
+                ApplicationUserId = result.UserId,
+                GradeId = grade.Id,
+            };
+            await studentRepository.Command.AddAsync(student);
+            await studentRepository.Command.SaveChangesAsync();
 
             return Result<AuthModel>.Success(result,result.Message);
         }

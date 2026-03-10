@@ -16,5 +16,6 @@ namespace El_Master.Application.Features.Auth.Commands.RegisterCommand
                 .NotNull()
                 .SetValidator(new RegisterDtoValidator());
         }
+
     }
 }

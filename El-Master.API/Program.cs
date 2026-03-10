@@ -1,11 +1,13 @@
 using El_Master.API.Middlewares;
 using El_Master.Application.Common.Behaviors;
 using El_Master.Application.Common.Results;
+using El_Master.Application.DependencyInjection;
 using El_Master.Application.Features.Auth.Commands.RegisterCommand;
 using El_Master.Application.Interfaces.Repositories;
 using El_Master.Application.Interfaces.Services;
 using El_Master.Application.Settings;
 using El_Master.Domain.Entities;
+using El_Master.Infrastructure.DependencyInjection;
 using El_Master.Infrastructure.Presistence;
 using El_Master.Infrastructure.Presistence.Repositories;
 using El_Master.Infrastructure.Services;
@@ -29,65 +31,14 @@ namespace El_Master.API
             var builder = WebApplication.CreateBuilder(args);
 
             // Add services to the container.
-            builder.Services.Configure<JWT>(builder.Configuration.GetSection("JWT"));
-            builder.Services.AddScoped<IAuthService, AuthService>();
-            builder.Services.AddScoped<IGradeRepository, GradeRepository>();
-            builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
-            builder.Services.AddScoped(typeof(ICommandRepository<>), typeof(EfCommandRepository<>));
-            builder.Services.AddScoped(typeof(IQueryRepository<>), typeof(DapperQueryRepository<>));
-
+            builder.Services.AddApplicationServices();
+            builder.Services.AddInfrastructureServices(builder.Configuration);
 
             // Disable Automatic Validation
             builder.Services.Configure<ApiBehaviorOptions>(options =>
             {
                 options.SuppressModelStateInvalidFilter = true;
             });
-
-            // Mediator
-            builder.Services.AddMediatR(cfg => {
-                cfg.RegisterServicesFromAssembly(typeof(RegisterHandler).Assembly);
-            });
-
-            // Fluent Validation 
-            //builder.Services.AddValidatorsFromAssemblyContaining<RegisterDtoValidator>();
-            builder.Services.AddValidatorsFromAssembly(typeof(RegisterDtoValidator).Assembly);
-            builder.Services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
-
-            // DB Configuration
-            builder.Services.AddDbContext<ApplicationDbContext>(options =>
-            {
-                options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
-            });
-
-            // IDbConnection - Dapper
-            builder.Services.AddScoped<IDbConnection>(sp =>
-                            new SqlConnection(builder.Configuration.GetConnectionString("DefaultConnection")));
-
-            //Register the Identity Service
-            builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
-                .AddEntityFrameworkStores<ApplicationDbContext>();
-
-            builder.Services.AddAuthentication(options =>
-            {
-                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-            })
-                .AddJwtBearer(o =>
-                {
-                    o.RequireHttpsMetadata = false;
-                    o.SaveToken = false;
-                    o.TokenValidationParameters = new TokenValidationParameters
-                    {
-                        ValidateIssuerSigningKey = true,
-                        ValidateIssuer = true,
-                        ValidateAudience = true,
-                        ValidateLifetime = true,
-                        ValidIssuer = builder.Configuration["JWT:Issuer"],
-                        ValidAudience = builder.Configuration["JWT:Audience"],
-                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JWT:Key"])),
-                        ClockSkew = TimeSpan.Zero
-                    };
-                });
 
             builder.Services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

@@ -20,7 +20,7 @@ namespace El_Master.Application.Features.Auth.Commands.RevokeToken
 
         public async Task<Result<string>> Handle(RevokeTokenCommand request, CancellationToken cancellationToken)
         {
-            var result = await authService.RevokeTokenAsync(request.Token);
+            var result = await authService.RevokeTokenAsync(request.RevokeTokenDto);
             if (!result)
                 return Result<string>.Failure("Invalid Token");
             return Result<string>.Success("","Token has been revoked.");
