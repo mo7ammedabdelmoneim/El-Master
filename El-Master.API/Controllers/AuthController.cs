@@ -1,7 +1,16 @@
-﻿using El_Master.Application.Common.Interfaces.Services;
-using El_Master.Application.DTOs;
+﻿using Azure;
+using El_Master.API.Extensions;
+using El_Master.API.Responses;
+using El_Master.Application.Features.Auth.Commands.AddRoleCommand;
+using El_Master.Application.Features.Auth.Commands.GetTokenCommand;
+using El_Master.Application.Features.Auth.Commands.RefreshTokenCommand;
+using El_Master.Application.Features.Auth.Commands.RegisterCommand;
+using El_Master.Application.Features.Auth.Commands.RevokeToken;
+using El_Master.Application.Interfaces.Services;
+using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
 namespace El_Master.API.Controllers
 {
@@ -9,55 +18,51 @@ namespace El_Master.API.Controllers
     [ApiController]
     public class AuthController : ControllerBase
     {
-        private readonly IAuthService authService;
+        private readonly IMediator _mediator;
 
-        public AuthController(IAuthService authService)
+        public AuthController(IMediator mediator)
         {
-            this.authService = authService;
+            _mediator = mediator;
         }
 
         [HttpPost("register")]
-        public async Task<IActionResult> RegisterAsync([FromBody] RegisterDto model)
+        public async Task<IActionResult> RegisterAsync(RegisterDto dto)
         {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
+            var command = new RegisterCommand(dto);
+            var result = await _mediator.Send(command);
 
-            var result = await authService.RegisterAsync(model);
+            if (result.IsSuccess)
+                SetRefreshTokenInCookie(result.Value.RefreshToken,
+                                    result.Value.RefreshTokenExpiration);
 
-            if (!result.IsAuthenticated)
-                return BadRequest(result.Message);
-
-            SetRefreshTokenInCookie(result.RefreshToken, result.RefreshTokenExpiration);
-
-            return Ok(result);
+            return result.ToApiResponse();
         }
 
-        [HttpPost("token")]
-        public async Task<IActionResult> GetTokenAsync([FromBody] TokenRequestDto model)
+        [HttpPost("get-token")]
+        public async Task<IActionResult> GetTokenAsync(GetTokenDto token)
         {
-            var result = await authService.GetTokenAsync(model);
+            var command = new GetTokenCommand(token); 
+            var result = await _mediator.Send(command);
 
-            if (!result.IsAuthenticated)
-                return BadRequest(result.Message);
+            if (!result.IsSuccess)
+                return result.ToApiResponse();
 
-            if (!string.IsNullOrEmpty(result.RefreshToken))
-                SetRefreshTokenInCookie(result.RefreshToken, result.RefreshTokenExpiration);
+            if (!string.IsNullOrEmpty(result.Value.RefreshToken))
+            {
+                SetRefreshTokenInCookie(result.Value.RefreshToken,
+                                        result.Value.RefreshTokenExpiration);
+            }
 
-            return Ok(result);
+            return result.ToApiResponse();
         }
 
         [HttpPost("add-role")]
-        public async Task<IActionResult> AddRoleAsync([FromBody] AddRoleDto model)
+        public async Task<IActionResult> AddRoleAsync(AddRoleDto dto)
         {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
+            var command = new AddRoleCommand(dto);
+            var result = await _mediator.Send(command);
 
-            var result = await authService.AddRoleAsync(model);
-
-            if (!string.IsNullOrEmpty(result))
-                return BadRequest(result);
-
-            return Ok(model);
+            return result.ToApiResponse();
         }
 
         [HttpPost("refresh-token")]
@@ -65,30 +70,25 @@ namespace El_Master.API.Controllers
         {
             var refreshToken = Request.Cookies["refreshToken"];
 
-            var result = await authService.RefreshTokenAsync(refreshToken);
+            var result = await _mediator.Send(new RefreshTokenCommand(refreshToken)
+            {
+                RefreshToken = refreshToken
+            });
 
-            if (!result.IsAuthenticated)
-                return BadRequest(result);
+            if (!result.IsSuccess)
+                return result.ToApiResponse();
 
-            SetRefreshTokenInCookie(result.RefreshToken, result.RefreshTokenExpiration);
+            SetRefreshTokenInCookie(result.Value.RefreshToken,
+                                    result.Value.RefreshTokenExpiration);
 
-            return Ok(result);
+            return result.ToApiResponse();
         }
 
         [HttpPost("revoke-token")]
-        public async Task<IActionResult> RevokeToken([FromBody] RevokeTokenDto model)
+        public async Task<IActionResult> RevokeToken(RevokeTokenCommand command)
         {
-            var token = model.Token ?? Request.Cookies["refreshToken"];
-
-            if (string.IsNullOrEmpty(token))
-                return BadRequest("Token is required!");
-
-            var result = await authService.RevokeTokenAsync(token);
-
-            if (!result)
-                return BadRequest("Token is invalid!");
-
-            return Ok();
+            var result = await _mediator.Send(command);
+            return result.ToApiResponse();
         }
 
         private void SetRefreshTokenInCookie(string refreshToken, DateTime expires)

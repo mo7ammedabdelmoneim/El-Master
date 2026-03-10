@@ -1,0 +1,16 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace El_Master.Application.Interfaces.Repositories
+{
+    public interface ICommandRepository<T> where T : class
+    {
+        Task AddAsync(T entity);
+        void Update(T entity);
+        void Delete(T entity);
+        Task SaveChangesAsync();
+    }
+}

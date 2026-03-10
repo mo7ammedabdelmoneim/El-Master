@@ -5,15 +5,15 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace El_Master.Application.DTOs
+namespace El_Master.Application.Features.Auth.Commands.GetTokenCommand
 {
-    public class TokenRequestDto
+    public class GetTokenDto
     {
-        
-        [Required]
+
+        [Required, DataType(DataType.EmailAddress)]
         public string Email { get; set; }
 
-        [Required]
+        [Required, DataType(DataType.Password)]
         public string Password { get; set; }
     }
 }

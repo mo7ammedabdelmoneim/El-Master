@@ -12,8 +12,21 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Common\Interfaces\Repository\" />
-    <Folder Include="Common\Services\" />
+    <Folder Include="Features\Auth\DTOs\" />
+    <Folder Include="Features\Auth\Queries\" />
+    <Folder Include="Features\Auth\Validators\" />
+    <Folder Include="Features\Grades\Commands\" />
+    <Folder Include="Features\Grades\DTOs\" />
+    <Folder Include="Features\Grades\Queries\" />
+    <Folder Include="Features\Courses\Commands\" />
+    <Folder Include="Features\Courses\DTOs\" />
+    <Folder Include="Features\Courses\Queries\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="FluentValidation" Version="12.1.1" />
+    <PackageReference Include="FluentValidation.AspNetCore" Version="11.3.1" />
+    <PackageReference Include="MediatR" Version="14.1.0" />
   </ItemGroup>
 
 </Project>

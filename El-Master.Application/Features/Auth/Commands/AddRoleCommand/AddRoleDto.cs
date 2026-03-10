@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace El_Master.Application.DTOs
+namespace El_Master.Application.Features.Auth.Commands.AddRoleCommand
 {
     public class AddRoleDto
     {

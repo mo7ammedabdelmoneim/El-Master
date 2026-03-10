@@ -1,9 +1,11 @@
-﻿using El_Master.Application.Common.Interfaces.Services;
-using El_Master.Application.DTOs;
+﻿using El_Master.Application.Features.Auth.Commands.AddRoleCommand;
+using El_Master.Application.Features.Auth.Commands.GetTokenCommand;
+using El_Master.Application.Features.Auth.Commands.RegisterCommand;
+using El_Master.Application.Features.Auth.DTOs;
+using El_Master.Application.Interfaces.Services;
 using El_Master.Application.Settings;
 using El_Master.Domain.Common;
 using El_Master.Domain.Entities;
-using El_Master.Infrastructure.Presistence;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
@@ -19,14 +21,12 @@ namespace El_Master.Infrastructure.Services
     {
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly RoleManager<IdentityRole> _roleManager;
-        private readonly ApplicationDbContext context;
         private readonly JWT _jwt;
 
-        public AuthService(UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager, IOptions<JWT> jwt, ApplicationDbContext context)
+        public AuthService(UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager, IOptions<JWT> jwt)
         {
             _userManager = userManager;
             _roleManager = roleManager;
-            this.context = context;
             _jwt = jwt.Value;
         }
 
@@ -34,10 +34,7 @@ namespace El_Master.Infrastructure.Services
         {
             if (await _userManager.FindByEmailAsync(model.Email) is not null)
                 return new AuthModel { Message = "Email is already registered!" };
-           var grade = context?.Grades?.FirstOrDefault(g => g.Name == model.Grade);
-           if (grade == null)
-             return new AuthModel { Message = "Invalid Grade!" };
-
+           
             var user = new ApplicationUser
             {
                 UserName = model.Email,
@@ -45,7 +42,6 @@ namespace El_Master.Infrastructure.Services
                 FirstName = model.FirstName,
                 LastName = model.LastName,
                 PhoneNumber = model.PhoneNumber,
-                GradeId = grade.Id,
             };
 
             var result = await _userManager.CreateAsync(user, model.Password);
@@ -70,18 +66,19 @@ namespace El_Master.Infrastructure.Services
 
             return new AuthModel
             {
+                UserId = user.Id,
+                Message = "Register process has been done successfully",
                 Email = user.Email,
                 ExpiresOn = jwtSecurityToken.ValidTo,
                 IsAuthenticated = true,
                 Roles = new List<string> { "User" },
                 Token = new JwtSecurityTokenHandler().WriteToken(jwtSecurityToken),
-                Username = user.UserName,
                 RefreshToken = refreshToken.Token,
                 RefreshTokenExpiration = refreshToken.ExpiresOn
             };
         }
 
-        public async Task<AuthModel> GetTokenAsync(TokenRequestDto model)
+        public async Task<AuthModel> GetTokenAsync(GetTokenDto model)
         {
             var authModel = new AuthModel();
 
@@ -96,10 +93,11 @@ namespace El_Master.Infrastructure.Services
             var jwtSecurityToken = await CreateJwtToken(user);
             var rolesList = await _userManager.GetRolesAsync(user);
 
+            authModel.UserId = user.Id;
+            authModel.Message = "Getting token process has been done successfully";
             authModel.IsAuthenticated = true;
             authModel.Token = new JwtSecurityTokenHandler().WriteToken(jwtSecurityToken);
             authModel.Email = user.Email;
-            authModel.Username = user.UserName;
             authModel.ExpiresOn = jwtSecurityToken.ValidTo;
             authModel.Roles = rolesList.ToList();
 
@@ -169,8 +167,10 @@ namespace El_Master.Infrastructure.Services
             authModel.IsAuthenticated = true;
             authModel.Token = new JwtSecurityTokenHandler().WriteToken(jwtToken);
             authModel.ExpiresOn = jwtToken.ValidTo;
+            authModel.UserId = user.Id;
             authModel.Email = user.Email;
-            authModel.Username = user.UserName;
+            authModel.Message = "Refresh token process has been done successfully";
+
             var roles = await _userManager.GetRolesAsync(user);
             authModel.Roles = roles.ToList();
             authModel.RefreshToken = newRefreshToken.Token;
@@ -196,6 +196,16 @@ namespace El_Master.Infrastructure.Services
             await _userManager.UpdateAsync(user);
 
             return true;
+        }
+        public async Task<AddRoleResponseDto?> GetUserRolesAsyn(string userId)
+        {
+            var user = await _userManager.FindByIdAsync(userId);
+
+            if (user == null)
+                return null;
+
+            var roles = await _userManager.GetRolesAsync(user);
+            return new AddRoleResponseDto { UserId = userId, Roles = roles.ToList() };
         }
 
 

@@ -1,8 +1,5 @@
-﻿using El_Master.Domain.Entities;
-using El_Master.Domain.Entities.ELearning.Domain.Entities;
-using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Identity;
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 
 namespace El_Master.Domain.Entities
 {
@@ -14,11 +11,6 @@ namespace El_Master.Domain.Entities
         [Required, StringLength(100)]
         public string LastName { get; set; }
         [Required]
-        public Guid GradeId { get; set; }
-
-        [ForeignKey("GradeId")]
-        public Grade Grade { get; set; }
-
         public Student? Student { get; set; }
 
         public List<RefreshToken>? RefreshTokens { get; set; } = new();

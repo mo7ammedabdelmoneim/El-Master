@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace El_Master.Application.DTOs
+namespace El_Master.Application.Features.Auth.Commands.RegisterCommand
 {
     public class RegisterDto
     {
@@ -18,17 +18,15 @@ namespace El_Master.Application.DTOs
 
         [Required, StringLength(30)]
         public string Grade { get; set; }
-        
+
         [Required, StringLength(14)]
         public string PhoneNumber { get; set; }
 
-        [Required, StringLength(128)]
+        [Required(), DataType(DataType.EmailAddress)]
         [EmailAddress]
         public string Email { get; set; }
 
-        [Required, StringLength(128)]
-        [PasswordPropertyText]
-        
+        [Required(), DataType(DataType.Password)]
         public string Password { get; set; }
     }
 }
