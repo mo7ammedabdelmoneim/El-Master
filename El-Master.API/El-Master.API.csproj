@@ -24,4 +24,8 @@
     <ProjectReference Include="..\El-Master.Infrastructure\El-Master.Infrastructure.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="wwwroot\images\" />
+  </ItemGroup>
+
 </Project>

@@ -2,7 +2,7 @@
 
 namespace El_Master.Application.Interfaces.Repositories
 {
-    public interface IStudentRepository : IRepository<Student>
+    public interface ICourseRepository : IRepository<Course>
     {
     }
 }

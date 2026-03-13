@@ -3,21 +3,20 @@ using El_Master.Application.Interfaces.Services;
 using El_Master.Domain.Entities;
 using El_Master.Infrastructure.Presistence.Repositories;
 using El_Master.Infrastructure.Presistence;
-using El_Master.Infrastructure.Services;
+using El_Master.Infrastructure.ervices;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Data.SqlClient;
 using System.Data;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using El_Master.Application.Settings;
+using El_Master.Application.Interfaces;
+using SqlKata.Compilers;
+using SqlKata.Execution;
 
 namespace El_Master.Infrastructure.DependencyInjection
 {
@@ -36,24 +35,47 @@ namespace El_Master.Infrastructure.DependencyInjection
             services.AddScoped<IDbConnection>(sp =>
                             new SqlConnection(configuration.GetConnectionString("DefaultConnection")));
 
+            // SqlKata
+            services.AddScoped<QueryFactory>(sp =>
+            {
+                var connection = sp.GetRequiredService<IDbConnection>();
+
+                var compiler = new SqlServerCompiler();
+
+                return new QueryFactory(connection, compiler);
+            });
+
             // Identity
             services.AddIdentity<ApplicationUser, IdentityRole>()
                 .AddEntityFrameworkStores<ApplicationDbContext>()
                 .AddDefaultTokenProviders();
+            services.Configure<IdentityOptions>(options =>
+            {
+                options.Password.RequireDigit = true;
+                options.Password.RequireLowercase = true;
+                options.Password.RequireUppercase = false;
+                options.Password.RequireNonAlphanumeric = false;
+                options.Password.RequiredLength = 6;
+            });
 
             // Repositories
             services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
-            services.AddScoped(typeof(ICommandRepository<>), typeof(EfCommandRepository<>));
-            services.AddScoped(typeof(IQueryRepository<>), typeof(DapperQueryRepository<>));
+            //services.AddScoped(typeof(IRepository<>), typeof(EfCommandRepository<>));
+            // services.AddScoped(typeof(IQueryRepository<>), typeof(DapperQueryRepository<>));
+            services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddScoped<IStudentRepository, StudentRepository>();
             services.AddScoped<IGradeRepository, GradeRepository>();
+            services.AddScoped<ITeacherRepository, TeacherRepository>();
+            services.AddScoped<ICourseRepository, CourseRepository>();
 
             // Services
             services.AddScoped<IAuthService, AuthService>();
+            services.AddScoped<IImageService, ImageService>();
 
             // JWT Authentication
             services.Configure<JWT>(configuration.GetSection("JWT"));
 
+            var jwtSettings = configuration.GetSection("JWT").Get<JWT>();
             services.AddAuthentication(options =>
             {
                 options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -71,11 +93,11 @@ namespace El_Master.Infrastructure.DependencyInjection
                     ValidateAudience = true,
                     ValidateLifetime = true,
 
-                    ValidIssuer = configuration["JWT:Issuer"],
-                    ValidAudience = configuration["JWT:Audience"],
+                    ValidIssuer = jwtSettings.Issuer,
+                    ValidAudience = jwtSettings.Audience,
 
                     IssuerSigningKey = new SymmetricSecurityKey(
-                        Encoding.UTF8.GetBytes(configuration["JWT:Key"])),
+                        Encoding.UTF8.GetBytes(jwtSettings.Key)),
 
                     ClockSkew = TimeSpan.Zero
                 };

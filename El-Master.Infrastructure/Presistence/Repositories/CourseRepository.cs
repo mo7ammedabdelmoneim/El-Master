@@ -9,9 +9,9 @@ using System.Threading.Tasks;
 
 namespace El_Master.Infrastructure.Presistence.Repositories
 {
-    public class StudentRepository : Repository<Student>, IStudentRepository
+    public class CourseRepository : Repository<Course>, ICourseRepository
     {
-        public StudentRepository(ApplicationDbContext context, QueryFactory db) : base(context, db)
+        public CourseRepository(ApplicationDbContext context, QueryFactory db) : base(context, db)
         {
         }
     }

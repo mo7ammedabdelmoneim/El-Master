@@ -34,16 +34,17 @@ namespace El_Master.API.Middlewares
 
                 await context.Response.WriteAsync(JsonSerializer.Serialize(response));
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 context.Response.StatusCode = StatusCodes.Status500InternalServerError;
+                context.Response.ContentType = "application/json";
 
                 var response = new ApiResponse<object>
                 {
                     Success = false,
                     Message = "Internal Server Error",
                     Data = null,
-                    Errors = null
+                    Errors = new List<string> { ex.Message }
                 };
 
                 await context.Response.WriteAsync(JsonSerializer.Serialize(response));

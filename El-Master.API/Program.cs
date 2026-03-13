@@ -10,7 +10,7 @@ using El_Master.Domain.Entities;
 using El_Master.Infrastructure.DependencyInjection;
 using El_Master.Infrastructure.Presistence;
 using El_Master.Infrastructure.Presistence.Repositories;
-using El_Master.Infrastructure.Services;
+using El_Master.Infrastructure.ervices;
 using FluentValidation;
 using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -47,6 +47,7 @@ namespace El_Master.API
 
             var app = builder.Build();
 
+            app.UseMiddleware<ExceptionMiddleware>();
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
             {
@@ -56,6 +57,7 @@ namespace El_Master.API
             await SeedRolesAsync(app);
 
             app.UseHttpsRedirection();
+            app.UseStaticFiles();
             app.UseAuthorization();
             app.UseMiddleware<ExceptionMiddleware>();
             app.MapControllers();

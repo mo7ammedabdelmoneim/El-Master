@@ -16,7 +16,7 @@ using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
 
-namespace El_Master.Infrastructure.Services
+namespace El_Master.Infrastructure.ervices
 {
     public class AuthService:IAuthService
     {

@@ -8,7 +8,9 @@ namespace El_Master.Application.Interfaces.Repositories
 {
     public interface IRepository<T> where T : class
     {
-        ICommandRepository<T> Command { get; }
-        IQueryRepository<T> Query { get; }
+        Task AddAsync(T entity);
+        void Update(T entity);
+        void Delete(T entity);
+        Task SaveChangesAsync();
     }
 }
