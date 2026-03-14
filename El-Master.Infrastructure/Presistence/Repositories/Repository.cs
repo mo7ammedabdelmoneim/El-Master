@@ -1,9 +1,11 @@
 ﻿using El_Master.Application.Interfaces.Repositories;
 using Microsoft.EntityFrameworkCore;
+using SqlKata;
 using SqlKata.Execution;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -21,7 +23,13 @@ namespace El_Master.Infrastructure.Presistence.Repositories
             this.db = db;
             dbSet = context.Set<T>();
         }
+        public async Task<T?> GetAsync(Expression<Func<T, bool>>? expression = null)
+        {
+            if (expression == null)
+                return await dbSet.FirstOrDefaultAsync();
+            return await dbSet.FirstOrDefaultAsync(expression);
 
+        }
         public async Task AddAsync(T entity)
             => await dbSet.AddAsync(entity);
 
@@ -30,7 +38,6 @@ namespace El_Master.Infrastructure.Presistence.Repositories
 
         public void Delete(T entity)
             => dbSet.Remove(entity);
-
         public async Task SaveChangesAsync()
             => await context.SaveChangesAsync();
     }

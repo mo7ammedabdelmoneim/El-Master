@@ -1,4 +1,6 @@
-﻿using El_Master.Application.Features.Teachers.Queries.GetAllTeachersQuery;
+﻿using El_Master.Application.Features.Grades.Queries.GetGradeCoursesQuery;
+using El_Master.Application.Features.Teachers.Commands.UpdateTeacherCommand;
+using El_Master.Application.Features.Teachers.Queries.GetAllTeachersQuery;
 using El_Master.Application.Interfaces.Repositories;
 using El_Master.Domain.Entities;
 using Microsoft.EntityFrameworkCore.Query.Internal;
@@ -34,6 +36,37 @@ namespace El_Master.Infrastructure.Presistence.Repositories
                 .FirstOrDefaultAsync<TeacherDto>();
 
             return result;
+        }
+
+        public async Task<TeacherDto?> GetTeacherByIdAsync(Guid id)
+        {
+            return await db.Query("Teachers as t")
+                .LeftJoin("Courses as c", "t.Id", "c.TeacherId")
+                .Where("t.Id", id)
+                .Select(
+                    "t.Id",
+                    "t.FirstName",
+                    "t.LastName",
+                    "t.Bio",
+                    "t.ImageUrl"
+                )
+                .SelectRaw("COUNT(c.Id) as CoursesCount")
+                .GroupBy(
+                    "t.Id",
+                    "t.FirstName",
+                    "t.LastName",
+                    "t.Bio",
+                    "t.ImageUrl"
+                )
+                .FirstOrDefaultAsync<TeacherDto>();
+        }
+
+        public async Task<IEnumerable<CourseDto>> GetCoursesByTeacherAsync(Guid teacherId)
+        {
+            return await db.Query("Courses")
+                .Where("TeacherId", teacherId)
+                .Select("Id", "Name")
+                .GetAsync<CourseDto>();
         }
     }
 }

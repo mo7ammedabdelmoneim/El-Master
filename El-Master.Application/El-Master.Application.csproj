@@ -13,9 +13,6 @@
 
   <ItemGroup>
     <Folder Include="DTOs\" />
-    <Folder Include="Features\Grades\Commands\" />
-    <Folder Include="Features\Courses\DTOs\" />
-    <Folder Include="Features\Courses\Queries\" />
   </ItemGroup>
 
   <ItemGroup>
