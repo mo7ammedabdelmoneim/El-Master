@@ -1,4 +1,5 @@
-﻿using El_Master.Application.Common.Results;
+﻿using AutoMapper;
+using El_Master.Application.Common.Results;
 using El_Master.Application.Features.Grades.Queries.GetAllGradesQuery;
 using El_Master.Application.Interfaces.Repositories;
 using El_Master.Domain.Entities;
@@ -15,10 +16,12 @@ namespace El_Master.Application.Features.Grades.Commands.AddGradeCommand
     public class AddGradeHandler : IRequestHandler<AddGradeCommand, Result<GradeDto>>
     {
         private readonly IGradeRepository gradeRepository;
+        private readonly IMapper mapper;
 
-        public AddGradeHandler(IGradeRepository gradeRepository)
+        public AddGradeHandler(IGradeRepository gradeRepository, IMapper mapper)
         {
             this.gradeRepository = gradeRepository;
+            this.mapper = mapper;
         }
         public async Task<Result<GradeDto>> Handle(AddGradeCommand request, CancellationToken cancellationToken)
         {
@@ -32,8 +35,9 @@ namespace El_Master.Application.Features.Grades.Commands.AddGradeCommand
 
             await gradeRepository.AddAsync(grade);
             await gradeRepository.SaveChangesAsync();
+            var gradeDto = mapper.Map<GradeDto>(grade);
 
-            return Result<GradeDto>.Success(new GradeDto { Id= grade.Id, Name= grade.Name }, "Grade has been added successfully.");
+            return Result<GradeDto>.Success(gradeDto, "Grade has been added successfully.");
         }
     }
 }

@@ -8,9 +8,9 @@ using System.Threading.Tasks;
 
 namespace El_Master.Application.Features.Courses.Commands.AddCourseCommand
 {
-    public class AddCourseValidator : AbstractValidator<AddCourseCommand>
+    public class UpdateCourseValidator : AbstractValidator<AddCourseCommand>
     {
-        public AddCourseValidator()
+        public UpdateCourseValidator()
         {
             RuleFor(x => x.AddCourseDto)
                 .NotNull()

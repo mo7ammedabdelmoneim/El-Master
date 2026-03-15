@@ -1,4 +1,5 @@
-﻿using El_Master.Application.Common.Results;
+﻿using AutoMapper;
+using El_Master.Application.Common.Results;
 using El_Master.Application.Interfaces;
 using El_Master.Application.Interfaces.Repositories;
 using El_Master.Application.Interfaces.Services;
@@ -19,14 +20,16 @@ namespace El_Master.Application.Features.Teachers.Commands.AddTeacherCommand
         private readonly ITeacherRepository teacherRepository;
         private readonly IImageService imageService;
         private readonly IUnitOfWork unitOfWork;
+        private readonly IMapper mapper;
 
         public AddTeacherHandler(
-            UserManager<ApplicationUser> userManager, ITeacherRepository teacherRepository, IImageService imageService, IUnitOfWork unitOfWork)
+            UserManager<ApplicationUser> userManager, ITeacherRepository teacherRepository, IImageService imageService, IUnitOfWork unitOfWork, IMapper mapper)
         {
             this.userManager = userManager;
             this.teacherRepository = teacherRepository;
             this.imageService = imageService;
             this.unitOfWork = unitOfWork;
+            this.mapper = mapper;
         }
 
         public async Task<Result<AddTeacherDto>> Handle(
@@ -44,14 +47,8 @@ namespace El_Master.Application.Features.Teachers.Commands.AddTeacherCommand
                 if (existingUser != null)
                     return Result<AddTeacherDto>.Failure("Email already exists");
 
-                var user = new ApplicationUser
-                {
-                    FirstName = dto.FirstName,
-                    LastName = dto.LastName,
-                    Email = dto.Email,
-                    UserName = dto.Email,
-                    PhoneNumber = dto.PhoneNumber
-                };
+                var user = mapper.Map<ApplicationUser>(dto);
+                user.UserName = dto.Email;
 
                 var result = await userManager.CreateAsync(user, dto.Password);
 
@@ -65,14 +62,9 @@ namespace El_Master.Application.Features.Teachers.Commands.AddTeacherCommand
                 if (dto.Image != null)
                     imageUrl = await imageService.UploadImageAsync(dto.Image);
 
-                var teacher = new Teacher
-                {
-                    FirstName = dto.FirstName,
-                    LastName = dto.LastName,
-                    Bio = dto.Bio,
-                    ApplicationUserId = user.Id,
-                    ImageUrl = imageUrl
-                };
+                var teacher = mapper.Map<Teacher>(dto);
+                teacher.ApplicationUserId = user.Id;
+                  
 
                 await teacherRepository.AddAsync(teacher);
                 await teacherRepository.SaveChangesAsync();

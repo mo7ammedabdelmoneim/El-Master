@@ -24,8 +24,10 @@ namespace El_Master.Application.Features.Grades.Commands.UpdateGradeCommand
             UpdateGradeCommand request,
             CancellationToken cancellationToken)
         {
-            var grade = await repository.GetAsync(x=>x.Id == request.Id);
+            if (string.IsNullOrEmpty(request.Dto.Name))
+                return Result<GradeDto>.Failure("Grade Name is required!");
 
+            var grade = await repository.GetAsync(x => x.Id == request.Id);
             if (grade == null)
                 return Result<GradeDto>.Failure("Grade not found");
             grade.Name = request.Dto.Name;

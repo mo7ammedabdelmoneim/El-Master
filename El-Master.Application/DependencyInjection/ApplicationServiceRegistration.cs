@@ -1,14 +1,9 @@
 ﻿using El_Master.Application.Common.Behaviors;
-using El_Master.Application.Features.Auth.Commands.RegisterCommand;
+using El_Master.Application.Mapping;
 using FluentValidation;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace El_Master.Application.DependencyInjection
 {
@@ -24,8 +19,8 @@ namespace El_Master.Application.DependencyInjection
             services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
             services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
 
-
-
+            // Mapping
+            services.AddAutoMapper(typeof(CourseProfile).Assembly);
             return services;
         }
     }

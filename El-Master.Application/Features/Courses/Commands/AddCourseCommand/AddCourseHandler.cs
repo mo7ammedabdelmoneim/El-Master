@@ -1,4 +1,5 @@
-﻿using El_Master.Application.Common.Results;
+﻿using AutoMapper;
+using El_Master.Application.Common.Results;
 using El_Master.Application.Interfaces.Repositories;
 using El_Master.Domain.Entities;
 using MediatR;
@@ -15,12 +16,14 @@ namespace El_Master.Application.Features.Courses.Commands.AddCourseCommand
         private readonly ITeacherRepository teacherRepository;
         private readonly IGradeRepository gradeRepository;
         private readonly ICourseRepository courseRepository;
+        private readonly IMapper mapper;
 
-        public AddCourseHandler(ITeacherRepository teacherRepository, IGradeRepository gradeRepository, ICourseRepository courseRepository)
+        public AddCourseHandler(ITeacherRepository teacherRepository, IGradeRepository gradeRepository, ICourseRepository courseRepository, IMapper mapper)
         {
             this.teacherRepository = teacherRepository;
             this.gradeRepository = gradeRepository;
             this.courseRepository = courseRepository;
+            this.mapper = mapper;
         }
         public async Task<Result<AddCourseDto>> Handle(AddCourseCommand request, CancellationToken cancellationToken)
         {
@@ -34,13 +37,7 @@ namespace El_Master.Application.Features.Courses.Commands.AddCourseCommand
             if (grade == null)
                 return Result<AddCourseDto>.Failure("Invalid GradeId");
 
-            var course = new Course
-            {
-                Name = request.AddCourseDto.CourseName,
-                Description = request.AddCourseDto.Description,
-                TeacherId = request.AddCourseDto.TeacherId,
-                GradeId = request.AddCourseDto.GradeId
-            };
+            var course = mapper.Map<Course>(request.AddCourseDto);
 
             await courseRepository.AddAsync(course);
             await courseRepository.SaveChangesAsync();

@@ -1,4 +1,5 @@
-﻿using El_Master.Application.Common.Results;
+﻿using AutoMapper;
+using El_Master.Application.Common.Results;
 using El_Master.Application.Features.Courses.Queries.GetAllCoursesQuery;
 using El_Master.Application.Interfaces.Repositories;
 using El_Master.Domain.Entities;
@@ -15,10 +16,12 @@ namespace El_Master.Application.Features.Courses.Commands.UpdateCourseCommand
      : IRequestHandler<UpdateCourseCommand, Result<CourseDto>>
     {
         private readonly ICourseRepository repository;
+        private readonly IMapper mapper;
 
-        public UpdateCourseHandler(ICourseRepository repository)
+        public UpdateCourseHandler(ICourseRepository repository, IMapper mapper)
         {
             this.repository = repository;
+            this.mapper = mapper;
         }
 
         public async Task<Result<CourseDto>> Handle(
@@ -30,22 +33,11 @@ namespace El_Master.Application.Features.Courses.Commands.UpdateCourseCommand
             if (course == null)
                 return Result<CourseDto>.Failure("Course not found");
 
-            course.Name = request.Dto.Name;
-            course.Description = request.Dto.Description;
-            course.GradeId = request.Dto.GradeId;
-            course.TeacherId = request.Dto.TeacherId;
+            mapper.Map(request.Dto,course);
             repository.Update(course);
             await repository.SaveChangesAsync();
 
-            var updatedCourse = new CourseDto
-            {
-                Id = request.Id,
-                Name = request.Dto.Name,
-                Description = request.Dto.Description,
-                GradeId = request.Dto.GradeId,
-                TeacherId = request.Dto.TeacherId,
-            };
-
+            var updatedCourse = mapper.Map<CourseDto>(course);
             return Result<CourseDto>.Success(updatedCourse,"Course updated successfully");
         }
     }

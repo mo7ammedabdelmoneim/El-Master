@@ -7,9 +7,9 @@ using System.Threading.Tasks;
 
 namespace El_Master.Application.Features.Teachers.Commands.AddTeacherCommand
 {
-    public class AddTeacherValidator : AbstractValidator<AddTeacherCommand>
+    public class UpdateTeacherValidator : AbstractValidator<AddTeacherCommand>
     {
-        public AddTeacherValidator()
+        public UpdateTeacherValidator()
         {
             RuleFor(x => x.AddTeacherDto)
                 .NotNull()

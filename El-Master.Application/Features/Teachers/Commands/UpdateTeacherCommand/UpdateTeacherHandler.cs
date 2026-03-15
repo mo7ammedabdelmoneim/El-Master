@@ -1,6 +1,8 @@
-﻿using El_Master.Application.Common.Results;
+﻿using AutoMapper;
+using El_Master.Application.Common.Results;
 using El_Master.Application.Features.Teachers.Queries.GetAllTeachersQuery;
 using El_Master.Application.Interfaces.Repositories;
+using El_Master.Domain.Entities;
 using MediatR;
 using System;
 using System.Collections.Generic;
@@ -14,10 +16,12 @@ namespace El_Master.Application.Features.Teachers.Commands.UpdateTeacherCommand
      : IRequestHandler<UpdateTeacherCommand, Result<TeacherDto>>
     {
         private readonly ITeacherRepository repository;
+        private readonly IMapper mapper;
 
-        public UpdateTeacherHandler(ITeacherRepository repository)
+        public UpdateTeacherHandler(ITeacherRepository repository,IMapper mapper)
         {
             this.repository = repository;
+            this.mapper = mapper;
         }
 
         public async Task<Result<TeacherDto>> Handle(
@@ -27,10 +31,7 @@ namespace El_Master.Application.Features.Teachers.Commands.UpdateTeacherCommand
             var teacher = await repository.GetAsync(x=> x.Id == request.Id);
             if (teacher == null)
                 return Result<TeacherDto>.Failure("Teacher not found");
-            teacher.FirstName = request.Dto.FirstName;
-            teacher.LastName = request.Dto.LastName;
-            teacher.Bio = request.Dto.Bio;
-            teacher.ImageUrl = request.Dto.ImageUrl;
+            mapper.Map(request.Dto,teacher);
 
             repository.Update(teacher);
             await repository.SaveChangesAsync();

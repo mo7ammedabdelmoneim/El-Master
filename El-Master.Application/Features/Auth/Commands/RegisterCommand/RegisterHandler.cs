@@ -31,21 +31,13 @@ namespace El_Master.Application.Features.Auth.Commands.RegisterCommand
 
             try
             {
-                    //check grade
-                    var grade = await gradeRepository.GetByNameAsync(request.RegisterDto.Grade);
+                // check grade
+                var grade = await gradeRepository.GetByNameAsync(request.RegisterDto.Grade);
                 if (grade == null)
                     return Result<AuthModel>.Failure("Invalid Grade");
 
 
-                var result = await _authService.RegisterAsync(new RegisterDto
-                {
-                    FirstName = request.RegisterDto.FirstName,
-                    LastName = request.RegisterDto.LastName,
-                    Grade = request.RegisterDto.Grade,
-                    PhoneNumber = request.RegisterDto.PhoneNumber,
-                    Email = request.RegisterDto.Email,
-                    Password = request.RegisterDto.Password
-                });
+                var result = await _authService.RegisterAsync(request.RegisterDto);
 
                 if (!result.IsAuthenticated)
                     return Result<AuthModel>.Failure(result.Message);

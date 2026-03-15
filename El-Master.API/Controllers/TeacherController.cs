@@ -21,7 +21,7 @@ namespace El_Master.API.Controllers
             this.mediator = mediator;
         }
         [HttpPost]
-        public async Task<IActionResult> AddTeacher(AddTeacherDto dto)
+        public async Task<IActionResult> AddTeacher([FromForm]AddTeacherDto dto)
         {
             var result = await mediator.Send(new AddTeacherCommand(dto));
 
