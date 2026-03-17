@@ -17,6 +17,7 @@ using El_Master.Application.Settings;
 using El_Master.Application.Interfaces;
 using SqlKata.Compilers;
 using SqlKata.Execution;
+using El_Master.Infrastructure.Services;
 
 namespace El_Master.Infrastructure.DependencyInjection
 {
@@ -60,17 +61,18 @@ namespace El_Master.Infrastructure.DependencyInjection
 
             // Repositories
             services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
-            //services.AddScoped(typeof(IRepository<>), typeof(EfCommandRepository<>));
-            // services.AddScoped(typeof(IQueryRepository<>), typeof(DapperQueryRepository<>));
             services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddScoped<IStudentRepository, StudentRepository>();
             services.AddScoped<IGradeRepository, GradeRepository>();
             services.AddScoped<ITeacherRepository, TeacherRepository>();
             services.AddScoped<ICourseRepository, CourseRepository>();
+            services.AddScoped<ILessonRepository, LessonRepository>();
+            services.AddScoped<ILessonAttachmentRepository, LessonAttachmentRepository>();
 
             // Services
             services.AddScoped<IAuthService, AuthService>();
-            services.AddScoped<IImageService, ImageService>();
+            services.AddScoped<IImageService, ImageService>(); 
+            services.AddScoped<IFileStorageService, LocalFileStorageService>();
 
             // JWT Authentication
             services.Configure<JWT>(configuration.GetSection("JWT"));

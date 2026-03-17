@@ -3,6 +3,7 @@ using El_Master.Application.Common.Results;
 using El_Master.Application.Interfaces;
 using El_Master.Application.Interfaces.Repositories;
 using El_Master.Application.Interfaces.Services;
+using El_Master.Domain.Common;
 using El_Master.Domain.Entities;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
@@ -73,10 +74,10 @@ namespace El_Master.Application.Features.Teachers.Commands.AddTeacherCommand
 
                 return Result<AddTeacherDto>.Success(dto, "Teacher created successfully");
             }
-            catch
+            catch (Exception ex)
             {
                 await unitOfWork.RollbackAsync();
-                throw;
+                return Result<AddTeacherDto>.Failure($"Failed to create teacher: {ex.Message}");
             }
         }
     }

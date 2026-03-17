@@ -3,11 +3,6 @@ using El_Master.Application.Common.Results;
 using El_Master.Application.Interfaces.Repositories;
 using El_Master.Domain.Entities;
 using MediatR;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace El_Master.Application.Features.Courses.Commands.AddCourseCommand
 {

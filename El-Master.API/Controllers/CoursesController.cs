@@ -4,6 +4,7 @@ using El_Master.Application.Features.Courses.Commands.DeleteCourseCommand;
 using El_Master.Application.Features.Courses.Commands.UpdateCourseCommand;
 using El_Master.Application.Features.Courses.Queries.GetAllCoursesQuery;
 using El_Master.Application.Features.Courses.Queries.GetCourseQuery;
+using El_Master.Application.Features.Lessons.Queries.GetCourseLessonsQuery;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -12,14 +13,15 @@ namespace El_Master.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class CourseController : ControllerBase
+    public class CoursesController : ControllerBase
     {
         private readonly IMediator mediator;
 
-        public CourseController(IMediator mediator)
+        public CoursesController(IMediator mediator)
         {
             this.mediator = mediator;
         }
+
         [HttpPost]
         public async Task<IActionResult> AddCourse(AddCourseDto courseDto)
         {
@@ -39,6 +41,16 @@ namespace El_Master.API.Controllers
         public async Task<IActionResult> GetCourse(Guid id)
         {
             var result = await mediator.Send(new GetCourseQuery(id));
+            return result.ToApiResponse();
+        }
+
+        [HttpGet("{id}/lessons")]
+        public async Task<IActionResult> GetCourseLessons(Guid id)
+        {
+            var query = new GetCourseLessonsQuery(id);
+
+            var result = await mediator.Send(query);
+
             return result.ToApiResponse();
         }
 

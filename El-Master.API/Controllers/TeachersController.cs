@@ -12,11 +12,11 @@ namespace El_Master.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class TeacherController : ControllerBase
+    public class TeachersController : ControllerBase
     {
         private readonly IMediator mediator;
 
-        public TeacherController(IMediator mediator)
+        public TeachersController(IMediator mediator)
         {
             this.mediator = mediator;
         }

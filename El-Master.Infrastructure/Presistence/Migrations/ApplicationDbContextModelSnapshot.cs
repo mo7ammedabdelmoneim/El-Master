@@ -190,15 +190,58 @@ namespace El_Master.Infrastructure.Migrations
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("VideoUrl")
+                    b.Property<string>("VideoPath")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CourseId");
+                    b.HasIndex("CourseId", "Order")
+                        .IsUnique();
 
                     b.ToTable("Lessons");
+                });
+
+            modelBuilder.Entity("El_Master.Domain.Entities.LessonAttachment", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("FileName")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<string>("FilePath")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<long>("FileSize")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("FileType")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<Guid>("LessonId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("LessonId");
+
+                    b.ToTable("lessonAttachments");
                 });
 
             modelBuilder.Entity("El_Master.Domain.Entities.LessonProgress", b =>
@@ -619,6 +662,17 @@ namespace El_Master.Infrastructure.Migrations
                     b.Navigation("Course");
                 });
 
+            modelBuilder.Entity("El_Master.Domain.Entities.LessonAttachment", b =>
+                {
+                    b.HasOne("El_Master.Domain.Entities.Lesson", "Lesson")
+                        .WithMany("Attachments")
+                        .HasForeignKey("LessonId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Lesson");
+                });
+
             modelBuilder.Entity("El_Master.Domain.Entities.LessonProgress", b =>
                 {
                     b.HasOne("El_Master.Domain.Entities.Lesson", "Lesson")
@@ -788,6 +842,8 @@ namespace El_Master.Infrastructure.Migrations
 
             modelBuilder.Entity("El_Master.Domain.Entities.Lesson", b =>
                 {
+                    b.Navigation("Attachments");
+
                     b.Navigation("PackageLessons");
                 });
 

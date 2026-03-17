@@ -1,11 +1,4 @@
-﻿using El_Master.Domain.Entities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace El_Master.Application.Features.Courses.Commands.AddCourseCommand
+﻿namespace El_Master.Application.Features.Courses.Commands.AddCourseCommand
 {
     public class AddCourseDto
     {

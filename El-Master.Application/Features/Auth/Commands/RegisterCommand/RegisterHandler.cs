@@ -53,10 +53,10 @@ namespace El_Master.Application.Features.Auth.Commands.RegisterCommand
 
                 return Result<AuthModel>.Success(result,result.Message);
             }
-            catch
+            catch(Exception ex)
             {
                 await unitOfWork.RollbackAsync();
-                throw;
+                return Result<AuthModel>.Failure($"Failed to register: {ex.Message}");
             }
         }
 
