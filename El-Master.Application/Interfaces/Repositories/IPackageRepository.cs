@@ -11,6 +11,7 @@ namespace El_Master.Application.Interfaces.Repositories
         Task<List<Guid>> GetExistingLessonIds(Guid packageId, List<Guid> lessonIds);
         Task<PackageLesson?> GetPackageLessonAsync(Guid packageId, Guid lessonId);
         Task<PackageDetailsDto?> GetPackageDetailsAsync(Guid packageId);
+        Task<List<PackageDetailsDto>> GetAllPackagesAsync();
         void RemovePackageLesson(PackageLesson entity);
     }
 }

@@ -28,7 +28,6 @@ namespace El_Master.Application.Features.Auth.Commands.RegisterCommand
             CancellationToken cancellationToken)
         {
             await unitOfWork.BeginTransactionAsync();
-
             try
             {
                 // check grade
@@ -50,6 +49,8 @@ namespace El_Master.Application.Features.Auth.Commands.RegisterCommand
                 };
                 await studentRepository.AddAsync(student);
                 await studentRepository.SaveChangesAsync();
+
+                await unitOfWork.CommitAsync();
 
                 return Result<AuthModel>.Success(result,result.Message);
             }

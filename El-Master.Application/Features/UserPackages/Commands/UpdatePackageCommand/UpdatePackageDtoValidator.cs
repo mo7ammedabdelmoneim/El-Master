@@ -1,11 +1,16 @@
 ﻿using El_Master.Application.Features.UserPackages.Commands.CreatePackageCommand;
 using FluentValidation;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
-namespace El_Master.Application.Features.UserPackages.Commands.CreatePackageCommand
+namespace El_Master.Application.Features.UserPackages.Commands.UpdatePackageCommand
 {
-    public class CreatePackageDtoValidator : AbstractValidator<CreatePackageDto>
+    public class UpdatePackageDtoValidator : AbstractValidator<UpdatePackageDto>
     {
-        public CreatePackageDtoValidator()
+        public UpdatePackageDtoValidator()
         {
             RuleFor(x => x.Name)
                 .NotEmpty()

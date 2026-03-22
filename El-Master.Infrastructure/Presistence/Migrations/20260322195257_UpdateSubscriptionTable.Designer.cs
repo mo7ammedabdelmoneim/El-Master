@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace El_Master.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20260322130610_UpdateSubscriptionTable")]
+    [Migration("20260322195257_UpdateSubscriptionTable")]
     partial class UpdateSubscriptionTable
     {
         /// <inheritdoc />

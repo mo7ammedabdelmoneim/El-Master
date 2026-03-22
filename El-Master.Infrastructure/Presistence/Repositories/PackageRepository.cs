@@ -29,6 +29,7 @@ namespace El_Master.Infrastructure.Presistence.Repositories
 
             return result != null;
         }
+
         public async Task<List<Guid>> GetExistingLessonIds(Guid packageId, List<Guid> lessonIds)
         {
             return await context.PackageLessons
@@ -67,6 +68,32 @@ namespace El_Master.Infrastructure.Presistence.Repositories
             package.LessonsCount = count;
 
             return package;
+        }
+
+        public async Task<List<PackageDetailsDto>> GetAllPackagesAsync()
+        {
+            var packages = await db.Query("Packages as p")
+                .LeftJoin("PackageLessons as pl", "p.Id", "pl.PackageId")
+                .Select(
+                    "p.Id",
+                    "p.Name",
+                    "p.Description",
+                    "p.Price",
+                    "p.Order",
+                    "p.IsActive"
+                )
+                .SelectRaw("COUNT(pl.Id) as LessonsCount")
+                .GroupBy(
+                    "p.Id",
+                    "p.Name",
+                    "p.Description",
+                    "p.Price",
+                    "p.Order",
+                    "p.IsActive"
+                )
+                .GetAsync<PackageDetailsDto>();
+
+            return packages.ToList();
         }
 
 

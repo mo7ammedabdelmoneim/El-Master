@@ -56,7 +56,6 @@ namespace El_Master.Application.Features.UserPackages.Commands.SubscribeToPackag
                 // Create Subscription
                 var subscription = new Subscription
                 {
-                    Id = Guid.NewGuid(),
                     StudentId = request.StudentId,
                     PackageId = request.PackageId,
                     StartDate = DateTime.UtcNow,

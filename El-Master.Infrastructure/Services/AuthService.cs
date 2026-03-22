@@ -69,9 +69,9 @@ namespace El_Master.Infrastructure.ervices
 
             // Add studentId if user is a student
             var roles = await _userManager.GetRolesAsync(user);
-            string studentId = "";
+            string studentId = " ";
 
-            if (roles.Contains("Student"))
+            if (roles.Contains("User"))
             {
                 var student = await studentRepository.GetAsync(x=>x.ApplicationUserId == user.Id);
 
@@ -113,7 +113,22 @@ namespace El_Master.Infrastructure.ervices
                 return authModel;
             }
 
-            var jwtSecurityToken = await CreateJwtToken(user);
+            // Add studentId if user is a student
+            var roles = await _userManager.GetRolesAsync(user);
+            string studentId = " ";
+
+            if (roles.Contains("User"))
+            {
+                var student = await studentRepository.GetAsync(x => x.ApplicationUserId == user.Id);
+
+                if (student != null)
+                {
+                    studentId = student.Id.ToString();
+                }
+            }
+
+
+            var jwtSecurityToken = await CreateJwtToken(user,studentId);
             var rolesList = await _userManager.GetRolesAsync(user);
 
             authModel.UserId = user.Id;
