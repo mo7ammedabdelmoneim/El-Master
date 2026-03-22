@@ -1,6 +1,4 @@
-﻿using El_Master.Application.Features.Grades.Queries.GetAllGradesQuery;
-using El_Master.Application.Features.Grades.Queries.GetGradeCoursesQuery;
-using El_Master.Application.Features.Lessons.Commands.CreateLessonCommand;
+﻿using El_Master.Application.Features.Lessons.Commands.CreateLessonCommand;
 using El_Master.Application.Interfaces.Repositories;
 using El_Master.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
@@ -74,23 +72,77 @@ namespace El_Master.Infrastructure.Presistence.Repositories
 
             return result;
         }
+        
+        public async Task<List<LessonDetailsDto>> GetPackageLessonsWithAttachmentsAsync(Guid packageId)
+        {
+            var rows = await db.Query("PackageLessons as pl")
+                .Join("Lessons as l", "pl.LessonId", "l.Id")
+                .LeftJoin("LessonAttachments as la", "l.Id", "la.LessonId")
+                .Where("pl.PackageId", packageId)
+                .OrderBy("l.Order")
+                .Select(
+                    "l.Id as LessonId",
+                    "l.Title",
+                    "l.Order",
+                    "l.DurationInMinutes",
+                    "l.VideoPath",
+
+                    "la.Id as AttachmentId",
+                    "la.FileName",
+                    "la.FilePath"
+                )
+                .GetAsync<dynamic>();
+
+            var grouped = rows
+                .GroupBy(r => (Guid)r.LessonId)
+                .Select(g => new LessonDetailsDto
+                {
+                    Id = g.Key,
+                    Title = g.First().Title,
+                    Order = g.First().Order,
+                    DurationInMinutes = g.First().DurationInMinutes,
+                    VideoUrl = g.First().VideoPath, // هنعدلها فوق
+
+                    Attachments = g
+                        .Where(x => x.AttachmentId != null)
+                        .Select(a => new AttachmentDto
+                        {
+                            Id = a.AttachmentId,
+                            FileName = a.FileName,
+                            FileUrl = a.FilePath
+                        })
+                        .ToList()
+                })
+                .ToList();
+
+            return grouped;
+        }
+
+
 
         public void RemoveAttachments(IEnumerable<LessonAttachment> attachments)
         {
             if (attachments == null || !attachments.Any())
                 return;
 
-            context.lessonAttachments.RemoveRange(attachments);
+            context.LessonAttachments.RemoveRange(attachments);
         }
 
         public async Task<LessonAttachment> GetAttachmentByIdAsync(Guid id)
         {
-            return await context.lessonAttachments.FirstOrDefaultAsync(x=>x.Id == id);
+            return await context.LessonAttachments.FirstOrDefaultAsync(x=>x.Id == id);
+        }
+
+        public async Task<List<Lesson>> GetByIdsAsync(List<Guid> ids)
+        {
+            return await context.Lessons
+                .Where(x => ids.Contains(x.Id))
+                .ToListAsync();
         }
 
         public void RemoveAttachment(LessonAttachment attachment)
         {
-            context.lessonAttachments.Remove(attachment);
+            context.LessonAttachments.Remove(attachment);
         }
 
     }

@@ -3,11 +3,6 @@ using El_Master.Application.Common.Results;
 using El_Master.Application.Features.Lessons.Commands.CreateLessonCommand;
 using El_Master.Application.Interfaces.Repositories;
 using MediatR;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace El_Master.Application.Features.Lessons.Queries.GetLessonQuery
 {
@@ -16,7 +11,6 @@ namespace El_Master.Application.Features.Lessons.Queries.GetLessonQuery
     {
         private readonly ILessonRepository _lessonRepository;
         private readonly IMapper mapper;
-
         public GetLessonByIdHandler(ILessonRepository lessonRepository, IMapper mapper)
         {
             _lessonRepository = lessonRepository;

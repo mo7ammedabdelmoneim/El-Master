@@ -68,6 +68,9 @@ namespace El_Master.Infrastructure.DependencyInjection
             services.AddScoped<ICourseRepository, CourseRepository>();
             services.AddScoped<ILessonRepository, LessonRepository>();
             services.AddScoped<ILessonAttachmentRepository, LessonAttachmentRepository>();
+            services.AddScoped<IPackageRepository, PackageRepository>();
+            services.AddScoped<IPackageLessonRepository, PackageLessonRepository>();
+            services.AddScoped<ISubscriptionRepository,SubscriptionRepository>();
 
             // Services
             services.AddScoped<IAuthService, AuthService>();

@@ -1,4 +1,5 @@
 ﻿using El_Master.Application.Interfaces.Repositories;
+using El_Master.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using SqlKata;
 using SqlKata.Execution;
@@ -32,7 +33,9 @@ namespace El_Master.Infrastructure.Presistence.Repositories
         }
         public async Task AddAsync(T entity)
             => await dbSet.AddAsync(entity);
-
+        public async Task AddRangeAsync(List<T> entities)
+            => await dbSet.AddRangeAsync(entities);
+        
         public void Update(T entity)
             => dbSet.Update(entity);
 

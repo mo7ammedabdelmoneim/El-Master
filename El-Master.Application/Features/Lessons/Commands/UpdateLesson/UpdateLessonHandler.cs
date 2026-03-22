@@ -169,7 +169,7 @@ namespace El_Master.Application.Features.Lessons.Commands.UpdateLesson
                 if (request.Dto.Attachments != null && request.Dto.Attachments.Any())
                 {
                     var attachments = await AddAttachmentsAsync(lesson.Id, request.Dto.Attachments);
-                    await lessonAttachmentRepository.AddRange(attachments);
+                    await lessonAttachmentRepository.AddRangeAsync(attachments);
                 }
 
                 await _lessonRepository.SaveChangesAsync();

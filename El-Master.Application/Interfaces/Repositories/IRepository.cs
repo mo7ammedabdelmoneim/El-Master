@@ -11,6 +11,7 @@ namespace El_Master.Application.Interfaces.Repositories
     {
         Task<T?> GetAsync(Expression<Func<T,bool>>? expression=null);
         Task AddAsync(T entity);
+        Task AddRangeAsync(List<T> entities);
         void Update(T entity);
         void Delete(T entity);
         Task SaveChangesAsync();

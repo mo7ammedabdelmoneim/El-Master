@@ -3,6 +3,7 @@ using El_Master.Application.Features.Auth.Commands.GetTokenCommand;
 using El_Master.Application.Features.Auth.Commands.RegisterCommand;
 using El_Master.Application.Features.Auth.Commands.RevokeToken;
 using El_Master.Application.Features.Auth.DTOs;
+using El_Master.Application.Interfaces.Repositories;
 using El_Master.Application.Interfaces.Services;
 using El_Master.Application.Settings;
 using El_Master.Domain.Common;
@@ -11,6 +12,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
+using System.Data;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography;
@@ -22,12 +24,17 @@ namespace El_Master.Infrastructure.ervices
     {
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly RoleManager<IdentityRole> _roleManager;
+        private readonly IStudentRepository studentRepository;
         private readonly JWT _jwt;
 
-        public AuthService(UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager, IOptions<JWT> jwt)
+        public AuthService(UserManager<ApplicationUser> userManager, 
+            RoleManager<IdentityRole> roleManager, 
+            IOptions<JWT> jwt,
+            IStudentRepository studentRepository)
         {
             _userManager = userManager;
             _roleManager = roleManager;
+            this.studentRepository = studentRepository;
             _jwt = jwt.Value;
         }
 
@@ -60,10 +67,21 @@ namespace El_Master.Infrastructure.ervices
             // Add user role
             await _userManager.AddToRoleAsync(user, "User");
 
-            // create a student obj
-            
+            // Add studentId if user is a student
+            var roles = await _userManager.GetRolesAsync(user);
+            string studentId = "";
 
-            var jwtSecurityToken = await CreateJwtToken(user);
+            if (roles.Contains("Student"))
+            {
+                var student = await studentRepository.GetAsync(x=>x.ApplicationUserId == user.Id);
+
+                if (student != null)
+                {
+                    studentId = student.Id.ToString();
+                }
+            }
+
+            var jwtSecurityToken = await CreateJwtToken(user,studentId);
 
             var refreshToken = GenerateRefreshToken();
             user.RefreshTokens?.Add(refreshToken);
@@ -214,7 +232,7 @@ namespace El_Master.Infrastructure.ervices
         }
 
 
-        private async Task<JwtSecurityToken> CreateJwtToken(ApplicationUser user)
+        private async Task<JwtSecurityToken> CreateJwtToken(ApplicationUser user,string studentId = "")
         {
             var userClaims = await _userManager.GetClaimsAsync(user);
             var roles = await _userManager.GetRolesAsync(user);
@@ -228,7 +246,8 @@ namespace El_Master.Infrastructure.ervices
                 new Claim(JwtRegisteredClaimNames.Sub, user.UserName),
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
                 new Claim(JwtRegisteredClaimNames.Email, user.Email),
-                new Claim("uid", user.Id)
+                new Claim("uid", user.Id),
+                new Claim("studentId", studentId)
             }
             .Union(userClaims)
             .Union(roleClaims);

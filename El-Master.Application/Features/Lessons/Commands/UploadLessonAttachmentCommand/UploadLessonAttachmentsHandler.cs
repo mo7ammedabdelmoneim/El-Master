@@ -51,7 +51,7 @@ namespace El_Master.Application.Features.Lessons.Commands.UploadLessonAttachment
                 var paths = await _fileStorage.UploadAttachmentsAsync(request.Attachments);
 
                 var attachments = await AddAttachmentsAsync(lesson.Id, request.Attachments);
-                await lessonAttachmentRepository.AddRange(attachments);
+                await lessonAttachmentRepository.AddRangeAsync(attachments);
                 await lessonAttachmentRepository.SaveChangesAsync();
 
                 lesson = await _lessonRepository.GetLessonWithAttachmentsAsync(lesson.Id);

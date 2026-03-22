@@ -1,6 +1,4 @@
-﻿
-using El_Master.Domain.Enums;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace El_Master.Domain.Entities
@@ -10,16 +8,15 @@ namespace El_Master.Domain.Entities
         [Required]
         [MaxLength(100)]
         public string Name { get; set; }
+        public string? Description { get; set; }
 
         [Required]
         [Range(0, 100000)]
         public decimal Price { get; set; }
 
         [Required]
-        public PackageType Type { get; set; }
-
-        //[Range(1, 365)]
-        //public int DurationInDays { get; set; }
+        public int Order { get; set; }
+        public bool IsActive { get; set; } = true;
 
         [Required]
         public Guid CourseId { get; set; }

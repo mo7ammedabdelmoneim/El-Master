@@ -26,7 +26,6 @@ namespace El_Master.Domain.Entities
         public Teacher Teacher { get; set; }
 
         public ICollection<Lesson> Lessons { get; set; } = new List<Lesson>();
-
         public ICollection<Package> Packages { get; set; } = new List<Package>();
     }
 }

@@ -10,10 +10,5 @@ namespace El_Master.Infrastructure.Presistence.Repositories
         public LessonAttachmentRepository(ApplicationDbContext context, QueryFactory db) : base(context, db)
         {
         }
-
-        public async Task AddRange(List<LessonAttachment> attachments)
-        {
-            await context.lessonAttachments.AddRangeAsync(attachments);
-        }
     }
 }

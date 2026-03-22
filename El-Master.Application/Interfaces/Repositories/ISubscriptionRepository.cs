@@ -4,7 +4,9 @@ using El_Master.Domain.Entities;
 
 namespace El_Master.Application.Interfaces.Repositories
 {
-    public interface ILessonAttachmentRepository : IRepository<LessonAttachment>
+    public interface ISubscriptionRepository : IRepository<Subscription>
     {
+        Task<bool> ExistsAsync(Guid studentId, Guid packageId);
+
     }
 }

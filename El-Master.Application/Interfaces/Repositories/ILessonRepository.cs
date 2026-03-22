@@ -8,11 +8,12 @@ namespace El_Master.Application.Interfaces.Repositories
     public interface ILessonRepository : IRepository<Lesson>
     {
         Task<Lesson> GetLessonWithAttachmentsAsync(Guid lessonId);
-        Task<Lesson?> GetLessonAsync(Guid lessonId);
+        Task<List<LessonDetailsDto>> GetPackageLessonsWithAttachmentsAsync(Guid packageId);
+        //Task<Lesson?> GetLessonAsync(Guid lessonId);
         Task<List<LessonDetailsDto>> GetLessonsByCourseIdAsync(Guid courseId);
         void RemoveAttachments(IEnumerable<LessonAttachment> attachments);
         Task<LessonAttachment> GetAttachmentByIdAsync(Guid id);
-
+        Task<List<Lesson>> GetByIdsAsync(List<Guid> ids);
         void RemoveAttachment(LessonAttachment attachment);
     }
 }

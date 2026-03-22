@@ -9,13 +9,12 @@ namespace El_Master.Infrastructure.Presistence
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
         {
         }
-
         public  DbSet<ApplicationUser> ApplicationUsers { get; set; }
         public  DbSet<Grade> Grades { get; set; }
         public DbSet<Teacher> Teachers { get; set; }
         public DbSet<Course> Courses { get; set; }
         public DbSet<Lesson> Lessons { get; set; }
-        public DbSet<LessonAttachment> lessonAttachments { get; set; }
+        public DbSet<LessonAttachment> LessonAttachments { get; set; }
         public DbSet<LessonProgress> LessonProgresses { get; set; }
         public DbSet<Package> Packages { get; set; }
         public DbSet<PackageLesson> PackageLessons { get; set; }
@@ -29,6 +28,10 @@ namespace El_Master.Infrastructure.Presistence
             builder.Entity<Lesson>()
              .HasIndex(x => new { x.CourseId, x.Order })
              .IsUnique();
+
+            builder.Entity<Subscription>()
+            .HasIndex(x => new { x.StudentId, x.PackageId })
+            .IsUnique();
         }
     }
 }
