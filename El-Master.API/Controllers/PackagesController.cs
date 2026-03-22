@@ -1,4 +1,5 @@
 ﻿using El_Master.API.Extensions;
+using El_Master.Application.Common.Results;
 using El_Master.Application.Features.UserPackages.Commands.AddLessonsToPackageCommand;
 using El_Master.Application.Features.UserPackages.Commands.CreatePackageCommand;
 using El_Master.Application.Features.UserPackages.Commands.RemoveLessonFromPackageCommand;
@@ -93,14 +94,12 @@ namespace El_Master.API.Controllers
         [HttpPost("{packageId}/subscribe")]
         public async Task<IActionResult> Subscribe(Guid packageId)
         {
-            var studentIdClaim = User.FindFirst("studentId");
+            var studentId = User.GetStudentId();
 
-            if (studentIdClaim == null)
-                throw new Exception("User is not a student");
+            if (studentId == null)
+                return Unauthorized(new Result<string> { Message = "Students only" });
 
-            var studentId = Guid.Parse(studentIdClaim.Value);
-
-            var command = new SubscribeToPackageCommand(packageId, studentId);
+            var command = new SubscribeToPackageCommand(packageId, studentId.Value);
 
             var result = await mediator.Send(command);
 
