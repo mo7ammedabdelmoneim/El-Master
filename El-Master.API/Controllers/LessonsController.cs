@@ -1,4 +1,5 @@
 ﻿using El_Master.API.Extensions;
+using El_Master.Application.Common.Results;
 using El_Master.Application.Features.Lessons.Commands.CreateLessonCommand;
 using El_Master.Application.Features.Lessons.Commands.DeleteAttachmentCommand;
 using El_Master.Application.Features.Lessons.Commands.DeleteLessonCommand;
@@ -7,6 +8,7 @@ using El_Master.Application.Features.Lessons.Commands.UploadLessonAttachmentComm
 using El_Master.Application.Features.Lessons.Queries.GetCourseLessonsQuery;
 using El_Master.Application.Features.Lessons.Queries.GetLessonQuery;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -23,6 +25,7 @@ namespace El_Master.API.Controllers
             this.mediator = mediator;
         }
 
+        [Authorize(Roles = "Teacher,Admin")]
         [HttpPost("{courseId}")]
         public async Task<IActionResult> CreateLesson(Guid courseId, [FromForm] CreateLessonDto lessonDto)
         {
@@ -31,6 +34,7 @@ namespace El_Master.API.Controllers
             return result.ToApiResponse();
         }
 
+        [Authorize(Roles = "Teacher,Admin")]
         [HttpPut("{lessonId}")]
         public async Task<IActionResult> UpdateLesson(Guid lessonId, [FromForm] UpdateLessonDto dto)
         {
@@ -41,9 +45,15 @@ namespace El_Master.API.Controllers
             return result.ToApiResponse();
         }
 
+        [Authorize]
         [HttpGet("{id}")]
         public async Task<IActionResult> GetLesson(Guid id)
         {
+            var studentId = User.GetStudentId();
+
+            if (studentId == null)
+                return Unauthorized(new Result<string> { Message = "Students only" });
+
             var query = new GetLessonQuery(id);
 
             var result = await mediator.Send(query);
@@ -51,6 +61,7 @@ namespace El_Master.API.Controllers
             return result.ToApiResponse();
         }
 
+        [Authorize(Roles = "Teacher,Admin")]
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteLesson(Guid id)
         {
@@ -59,6 +70,7 @@ namespace El_Master.API.Controllers
             return result.ToApiResponse();
         }
 
+        [Authorize(Roles = "Teacher,Admin")]
         [HttpPost("{id}/attachments")]
         public async Task<IActionResult> UploadLessonAttachments(Guid id, [FromForm] List<IFormFile> attachments)
         {
@@ -67,6 +79,7 @@ namespace El_Master.API.Controllers
             return result.ToApiResponse();
         }
 
+        [Authorize(Roles = "Teacher,Admin")]
         [HttpDelete("/api/attachments/{id}")]
         public async Task<IActionResult> DeleteAttachment(Guid id)
         {

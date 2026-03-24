@@ -6,6 +6,7 @@ using El_Master.Application.Features.Grades.Queries.GetAllGradesQuery;
 using El_Master.Application.Features.Grades.Queries.GetGradeCoursesQuery;
 using El_Master.Application.Features.Grades.Queries.GetGradeQuery;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -22,6 +23,7 @@ namespace El_Master.API.Controllers
             this.mediator = mediator;
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         public async Task<IActionResult> AddGrade(AddGradeDto dto)
         {
@@ -35,6 +37,7 @@ namespace El_Master.API.Controllers
             return result.ToApiResponse();
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateGrade(Guid id, UpdateGradeDto dto)
         {
@@ -42,13 +45,13 @@ namespace El_Master.API.Controllers
             return result.ToApiResponse();
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteGrade(Guid id)
         {
             var result = await mediator.Send(new DeleteGradeCommand(id));
             return result.ToApiResponse();
         }
-    
 
         [HttpGet]
         public async Task<IActionResult> GetGrades()

@@ -8,6 +8,7 @@ using El_Master.Application.Features.Auth.Commands.RegisterCommand;
 using El_Master.Application.Features.Auth.Commands.RevokeToken;
 using El_Master.Application.Interfaces.Services;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
@@ -56,6 +57,8 @@ namespace El_Master.API.Controllers
             return result.ToApiResponse();
         }
 
+
+        [Authorize(Roles = "Admin")]
         [HttpPost("add-role")]
         public async Task<IActionResult> AddRoleAsync(AddRoleDto dto)
         {
@@ -84,6 +87,7 @@ namespace El_Master.API.Controllers
             return result.ToApiResponse();
         }
 
+        [Authorize]
         [HttpPost("revoke-token")]
         public async Task<IActionResult> RevokeToken(RevokeTokenDto revokeToken)
         {

@@ -19,6 +19,7 @@ namespace El_Master.API.Controllers
             this.mediator = mediator;
         }
 
+        [Authorize]
         [HttpGet("my")]
         public async Task<IActionResult> GetMySubscriptions()
         {

@@ -6,6 +6,7 @@ using El_Master.Application.Features.Teachers.Queries.GetAllTeachersQuery;
 using El_Master.Application.Features.Teachers.Queries.GetTeacherCoursesQuery;
 using El_Master.Application.Features.Teachers.Queries.GetTeacherQuery;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace El_Master.API.Controllers
@@ -20,6 +21,8 @@ namespace El_Master.API.Controllers
         {
             this.mediator = mediator;
         }
+
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         public async Task<IActionResult> AddTeacher([FromForm]AddTeacherDto dto)
         {
@@ -48,6 +51,7 @@ namespace El_Master.API.Controllers
             return result.ToApiResponse();
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateTeacher(Guid id, UpdateTeacherDto dto)
         {
@@ -55,6 +59,7 @@ namespace El_Master.API.Controllers
             return result.ToApiResponse();
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteTeacher(Guid id)
         {

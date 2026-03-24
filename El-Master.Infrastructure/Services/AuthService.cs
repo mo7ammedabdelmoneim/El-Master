@@ -69,7 +69,7 @@ namespace El_Master.Infrastructure.ervices
 
             // Add studentId if user is a student
             var roles = await _userManager.GetRolesAsync(user);
-            string studentId = " ";
+            string studentId = "";
 
             if (roles.Contains("User"))
             {
@@ -115,7 +115,7 @@ namespace El_Master.Infrastructure.ervices
 
             // Add studentId if user is a student
             var roles = await _userManager.GetRolesAsync(user);
-            string studentId = " ";
+            string studentId = "";
 
             if (roles.Contains("User"))
             {

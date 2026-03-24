@@ -41,5 +41,19 @@ namespace El_Master.Infrastructure.Presistence.Repositories
 
             return result.ToList();
         }
+
+        public async Task<bool> HasAccessToLessonAsync(Guid studentId, Guid lessonId)
+{
+    var result = await db.Query("Subscriptions as s")
+        .Join("Packages as p", "s.PackageId", "p.Id")
+        .Join("PackageLessons as pl", "p.Id", "pl.PackageId")
+        .Where("s.StudentId", studentId)
+        .Where("s.IsActive", true)
+        .Where("pl.LessonId", lessonId)
+        .Select("s.Id")
+        .FirstOrDefaultAsync();
+
+    return result != null;
+}
     } 
 }

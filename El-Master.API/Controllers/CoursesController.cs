@@ -6,6 +6,7 @@ using El_Master.Application.Features.Courses.Queries.GetAllCoursesQuery;
 using El_Master.Application.Features.Courses.Queries.GetCourseQuery;
 using El_Master.Application.Features.Lessons.Queries.GetCourseLessonsQuery;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -23,6 +24,7 @@ namespace El_Master.API.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "Teacher,Admin")]
         public async Task<IActionResult> AddCourse(AddCourseDto courseDto)
         {
             var command = new AddCourseCommand(courseDto);
@@ -44,6 +46,7 @@ namespace El_Master.API.Controllers
             return result.ToApiResponse();
         }
 
+        [Authorize]
         [HttpGet("{id}/lessons")]
         public async Task<IActionResult> GetCourseLessons(Guid id)
         {
@@ -54,6 +57,7 @@ namespace El_Master.API.Controllers
             return result.ToApiResponse();
         }
 
+        [Authorize(Roles = "Teacher,Admin")]
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateCourse(Guid id, UpdateCourseDto dto)
         {
@@ -61,6 +65,7 @@ namespace El_Master.API.Controllers
             return result.ToApiResponse();
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteCourse(Guid id)
         {

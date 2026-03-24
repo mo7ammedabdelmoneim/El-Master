@@ -26,6 +26,7 @@ namespace El_Master.API.Controllers
             this.mediator = mediator;
         }
 
+        [Authorize(Roles = "Teacher,Admin")]
         [HttpPost("{courseId}")]
         public async Task<IActionResult> CreatePackage(Guid courseId, CreatePackageDto dto)
         {
@@ -52,6 +53,7 @@ namespace El_Master.API.Controllers
             return result.ToApiResponse();
         }
 
+        [Authorize(Roles = "Teacher,Admin")]
         [HttpPut("{packageId}")]
         public async Task<IActionResult> Update(Guid packageId, UpdatePackageDto dto)
         {
@@ -62,6 +64,7 @@ namespace El_Master.API.Controllers
             return result.ToApiResponse();
         }
 
+        [Authorize(Roles = "Teacher,Admin")]
         [HttpPost("{packageId}/lessons")]
         public async Task<IActionResult> AddLessons(Guid packageId, AddLessonsToPackageDto dto)
         {
@@ -80,6 +83,7 @@ namespace El_Master.API.Controllers
             return result.ToApiResponse();
         }
 
+        [Authorize(Roles = "Teacher,Admin")]
         [HttpDelete("{packageId}/lessons/{lessonId}")]
         public async Task<IActionResult> RemoveLesson(Guid packageId, Guid lessonId)
         {

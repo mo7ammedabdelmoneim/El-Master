@@ -34,6 +34,7 @@ namespace El_Master.API
             // Add services to the container.
             builder.Services.AddApplicationServices();
             builder.Services.AddInfrastructureServices(builder.Configuration);
+            builder.Services.AddHttpContextAccessor();
 
             // Disable Automatic Validation
             builder.Services.Configure<ApiBehaviorOptions>(options =>

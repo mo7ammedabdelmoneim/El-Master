@@ -7,7 +7,7 @@ namespace El_Master.API.Extensions
         public static Guid? GetStudentId(this ClaimsPrincipal user)
         {
             var claim = user.FindFirst("studentId")?.Value;
-            return claim != null ? Guid.Parse(claim) : null;
+            return !string.IsNullOrEmpty(claim ) ? Guid.Parse(claim) : null;
         }
     }
 }

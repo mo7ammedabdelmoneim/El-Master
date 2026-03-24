@@ -9,6 +9,7 @@ namespace El_Master.Application.Interfaces.Repositories
     {
         Task<bool> ExistsAsync(Guid studentId, Guid packageId);
         Task<List<MySubscriptionDto>> GetStudentSubscriptionsAsync(Guid studentId);
+        Task<bool> HasAccessToLessonAsync(Guid studentId, Guid lessonId);
 
     }
 }
